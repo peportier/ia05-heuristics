@@ -20,7 +20,7 @@ limitations under the License.
 ```
 # Plus court chemin en présence d'information contextuelle
 
-Répertoire GitHub correspondant à cet article : https://github.com/peportier/ia04-heuristics
+Répertoire GitHub correspondant à cet article : https://github.com/peportier/ia05-heuristics
 
 Comment améliorer la recherche d'un plus court chemin entre un nœud source $s$ et un nœud cible $t$ quand nous possédons pour tout nœud $u$ du graphe une *estimation* $h(u)$ de la distance séparant $u$ de la cible ?
 
@@ -442,3 +442,89 @@ State b = {14,10,9,4,13,6,5,8,2,12,7,0,1,3,11,15};
 ```
 
 L'algorithme A* en tant que variante de la recherche en largeur est gourmand en mémoire (toutes les configurations de coût inférieur à la solution optimale sont mémorisées).
+
+# Approfondissement itéré
+
+Pour économiser la mémoire, la stratégie de l'approfondissement itéré propose de faire un parcours en profondeur jusqu'à une profondeur maximale $n$. Si aucune solution n'est trouvée, une nouvelle recherche est lancée jusqu'à une profondeur maximale $n+1$. Etc.
+$$
+\begin{aligned}
+&\textbf{proc } IDDFS(s,g) \text{ ⍝ Iterative Deepening Depth-First Search, $s$: starting node, $g$: goal} \\
+&\quad maxDepth \gets 0 \\
+&\quad path \gets () \text{ ⍝ the path to a solution is initially empty} \\
+&\quad \textbf{while } path = () \textbf{ do} \\
+&\quad\quad r \gets BDFS(s,g,0,maxDepth) \\
+&\quad\quad maxDepth++ \\
+&\quad \textbf{end while} \\
+&\textbf{end proc} \\
+& \\
+&\textbf{proc } BDFS(n,g,depth,maxDepth) \text{ ⍝ Bounded DFS to explore no deeper than $maxDepth$} \\
+&\quad \textbf{if } n = g \textbf{ then return } (n) \textbf{ end if} \\
+&\quad \textbf{if } depth \geq maxDepth \textbf{ then return } () \textbf{ end if} \\
+&\quad \textbf{for all } m \in s(n) \textbf{ do } \text{ ⍝ $s(n)$ are the successors of $n$} \\
+&\quad\quad path \gets BDFS(m,g,depth+1,maxDepth) \\
+&\quad\quad \textbf{if } path \neq () \textbf{ then return } (n)\text{++}path \textbf{ end if} \\
+&\quad \textbf{end for} \\
+&\quad \textbf{return } () \\
+&\textbf{end proc}
+\end{aligned}
+$$
+Soit $N_b(d)$ le nombre de nœuds d'un espace d'états structuré en arbre enraciné de profondeur $d$ et de facteur de branchement $b$ (i.e., chaque nœud qui n'est pas une feuille possède $b$ fils).
+$$
+N_b(d) = \sum_{i=0}^{d} b^i = \frac{b^{d+1} - 1}{b - 1}
+$$
+
+$$
+\begin{aligned}
+& \sum_{d=1}^{d_{max}-1} N_b(d) \\
+= \quad & \sum_{d=1}^{d_{max}-1} \frac{b^{d+1}-1}{b-1} \\
+= \quad & \frac{1}{b-1} \left(\left( \sum_{d=1}^{d_{max}-1} b^{d+1} \right) - d_{max} + 1 \right) \\
+= \quad & \frac{1}{b-1} \left(\left( \sum_{d=2}^{d_{max}} b^d \right) - d_{max} + 1 \right) \\
+= \quad & \frac{1}{b-1} \left( \frac{b^{d_{max}+1} - 1}{b - 1} - 1 - b - d_{max} + 1 \right) \\
+= \quad & \frac{1}{b-1} N_b(d_{max}) - \dots
+\end{aligned}
+$$
+
+Donc, à partir d'un facteur de branchement $b > 2$, il y a moins de nœuds dans la somme de tous les arbres excepté le dernier que de nœuds dans le dernier arbre. Ce raisonnement justifie l'utilisation de l'approfondissement itéré qui peut permettre une économie en mémoire sans que les visites multiples d'un même noeud aient un impact sur le nombre totale d'opérations lors de l'exécution de l'algorithme.
+
+# Approfondissement itéré pour A*
+
+$$
+\begin{aligned}
+&\textbf{proc } IDA(initialState) \text{ ⍝ Iterative Deepening A*} \\
+&\quad nub \gets h(initialState) \text{ ⍝ Next Upper Bound (nub) is initialised with the heuristic value of $initialState$} \\
+&\quad bestPath \gets () \\
+&\quad path (initialState) \text{ ⍝ the reconstructed path must include the source} \\
+&\quad \textbf{while } bestPath = () \wedge nub \neq \infty \textbf{ do} \\
+&\quad\quad ub \gets nub \text{ ⍝ $ub$ is the current bound on the depth over which the exploration must stop} \\
+&\quad\quad nub \gets \infty \text{ ⍝ initialisation of the bound on the depth during the next iteration} \\
+&\quad\quad \text{ ⍝ $nub$ will be updated by SEARCH to the minimum of all the depths that exceeded $ub$} \\
+&\quad\quad bestPath \gets SEARCH(initialState, 0, ub, nub, path, bestPath) \\
+&\quad \textbf{end while} \\
+&\quad \textbf{return } bestPath \\
+&\textbf{end proc} \\
+& \\
+&\textbf{proc } SEARCH(currentState, g, ub, nub, path, bestPath) \\
+&\quad \text{ ⍝ $g$ is the length of the shortest known path to CurrentState} \\
+&\quad \textbf{if } finalState(currentState) \textbf{ then} \\
+&\quad\quad \text{ ⍝ we must store the solution, for $path$ will be emptied while climbing up the recursive ladder} \\
+&\quad\quad bestPath \gets path  \\
+&\quad\quad \textbf{return} \\
+&\quad \textbf{end if} \\
+&\quad \textbf{for all } neighbor \in succ(currentState)\backslash path \textbf{ do} \text{ ⍝ exclude neighbors already on $path$} \\
+&\quad\quad f \gets g + w(currentState,neighbor) + h(neighbor) \text{ ⍝ under-estimation of the distance to the goal} \\
+&\quad\quad \textbf{if } f > ub \textbf{ then} \text{ ⍝ when this under-estimation exceeds the current bound...}\\
+&\quad\quad\quad \textbf{if } f < nub \textbf{ then} \text{ ⍝ ...but is smaller than the current estimate of the next bound...}\\
+&\quad\quad\quad\quad nub \gets f \text{ ⍝ ...update this estimate}\\
+&\quad\quad\quad \textbf{end if } \\
+&\quad\quad \textbf{else} \\
+&\quad\quad\quad path.push\_back(neighbor)\\
+&\quad\quad\quad SEARCH(neighbor, g+w(currentState, neighbor), ub, nub, path, bestPath)\\
+&\quad\quad\quad path.pop\_back()\\
+&\quad\quad\quad \textbf{if } bestPath \neq () \textbf{ then return end if } \text{ ⍝ solution found}\\
+&\quad\quad \textbf{end if} \\
+&\quad \textbf{end for} \\
+&\quad \textbf{return } \text{ ⍝ solution not found}\\
+&\textbf{end proc}
+\end{aligned}
+$$
+
