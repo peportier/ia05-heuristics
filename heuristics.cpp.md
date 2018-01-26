@@ -303,7 +303,7 @@ astar( const State& initial_state,
   vector<State> neighbors;
   
   nbiter = 0; // count how many positions had to be explored before finding the
-                 // shortest path from the source to the target
+              // shortest path from the source to the target
 
   while( !grey.empty() )
   {
@@ -452,7 +452,7 @@ $$
 &\quad maxDepth \gets 0 \\
 &\quad path \gets () \text{ ⍝ the path to a solution is initially empty} \\
 &\quad \textbf{while } path = () \textbf{ do} \\
-&\quad\quad r \gets BDFS(s,g,0,maxDepth) \\
+&\quad\quad path \gets BDFS(s,g,0,maxDepth) \\
 &\quad\quad maxDepth++ \\
 &\quad \textbf{end while} \\
 &\textbf{end proc} \\
@@ -493,7 +493,7 @@ $$
 &\textbf{proc } IDA(initialState) \text{ ⍝ Iterative Deepening A*} \\
 &\quad nub \gets h(initialState) \text{ ⍝ Next Upper Bound (nub) is initialised with the heuristic value of $initialState$} \\
 &\quad bestPath \gets () \\
-&\quad path (initialState) \text{ ⍝ the reconstructed path must include the source} \\
+&\quad path \gets (initialState) \text{ ⍝ the reconstructed path must include the source} \\
 &\quad \textbf{while } bestPath = () \wedge nub \neq \infty \textbf{ do} \\
 &\quad\quad ub \gets nub \text{ ⍝ $ub$ is the current bound on the depth over which the exploration must stop} \\
 &\quad\quad nub \gets \infty \text{ ⍝ initialisation of the bound on the depth during the next iteration} \\
@@ -504,7 +504,7 @@ $$
 &\textbf{end proc} \\
 & \\
 &\textbf{proc } SEARCH(currentState, g, ub, nub, path, bestPath) \\
-&\quad \text{ ⍝ $g$ is the length of the shortest known path to CurrentState} \\
+&\quad \text{ ⍝ $g$ is the length of the shortest known path to $currentState$} \\
 &\quad \textbf{if } finalState(currentState) \textbf{ then} \\
 &\quad\quad \text{ ⍝ we must store the solution, for $path$ will be emptied while climbing up the recursive ladder} \\
 &\quad\quad bestPath \gets path  \\
