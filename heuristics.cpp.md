@@ -498,7 +498,7 @@ $$
 &\quad\quad ub \gets nub \text{ ⍝ $ub$ is the current bound on the depth over which the exploration must stop} \\
 &\quad\quad nub \gets \infty \text{ ⍝ initialisation of the bound on the depth during the next iteration} \\
 &\quad\quad \text{ ⍝ $nub$ will be updated by SEARCH to the minimum of all the depths that exceeded $ub$} \\
-&\quad\quad bestPath \gets SEARCH(initialState, 0, ub, nub, path, bestPath) \\
+&\quad\quad SEARCH(initialState, 0, ub, nub, path, bestPath) \\
 &\quad \textbf{end while} \\
 &\quad \textbf{return } bestPath \\
 &\textbf{end proc} \\
