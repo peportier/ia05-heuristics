@@ -528,3 +528,5 @@ $$
 \end{aligned}
 $$
 
+Le code source d'une implémentation de l'algorithme $IDA*$ appliqué au problème du taquin est disponible à l'adresse suivante : https://github.com/peportier/ia06-idastar
+
