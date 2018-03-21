@@ -521,7 +521,7 @@ $$
 \end{aligned}
 $$
 
-Donc, à partir d'un facteur de branchement $b > 2$, il y a moins de nœuds dans la somme de tous les arbres excepté le dernier que de nœuds dans le dernier arbre. Ce raisonnement justifie l'utilisation de l'approfondissement itéré qui peut permettre une économie en mémoire sans que les visites multiples d'un même noeud aient un impact sur le nombre totale d'opérations lors de l'exécution de l'algorithme.
+Donc, à partir d'un facteur de branchement $b > 1$, il y a moins de nœuds dans la somme de tous les arbres excepté le dernier que de nœuds dans le dernier arbre. Ce raisonnement justifie l'utilisation de l'approfondissement itéré qui peut permettre une économie en mémoire sans que les visites multiples d'un même noeud aient un impact sur le nombre totale d'opérations lors de l'exécution de l'algorithme.
 
 # Approfondissement itéré pour A*
 
