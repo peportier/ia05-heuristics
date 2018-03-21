@@ -216,8 +216,8 @@ print( const State& state )
 int
 main()
 {
-  //State b = {4,8,3,2,0,7,6,5,1};
-  State b = {14,10,9,4,13,6,5,8,2,12,7,0,1,3,11,15};
+  State b = {4,8,3,2,0,7,6,5,1};
+  //State b = {14,10,9,4,13,6,5,8,2,12,7,0,1,3,11,15};
   list<State> best_path;
   int nbiter = 0;
   

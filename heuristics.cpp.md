@@ -26,15 +26,19 @@ Comment améliorer la recherche d'un plus court chemin entre un nœud source $s$
 
 ## La notion de fonction heuristique
 
+### Définitions
+
 La fonction $h$ est appelée *fonction heuristique*.
 
 *Déf.* Une heuristique $h$ est *admissible* si pour tout nœud $u$, $h(u)$ est une borne inférieure de la plus courte distance séparant $u$ de la cible $t$, i.e. $h(u) \leq \delta(u,t)$ (avec $\delta(u,t)$ désignant la longueur d'un chemin optimal entre $u$ et $t$ ).
 
-*Déf.* Une heuristique $h$ est *consistante* si pour toute arête $e = (u,v)$ nous avons $h(u) \leq h(v) + w(u,v)$ (avec $w(u,v)$ le poids de l'arête $(u,v)$).
+*Déf.* Une heuristique $h$ est *cohérente* si pour toute arête $e = (u,v)$ nous avons $h(u) \leq h(v) + w(u,v)$ (avec $w(u,v)$ le poids de l'arête $(u,v)$).
 
 *Déf.* Soient $(u_0,\dots,u_k)$ un chemin et $g(u_i)$ le coût du chemin $(u_0,\dots,u_i)$. Nous posons $f(u_i) = g(u_i) + h(u_i)$.  Une heuristique $h$ est *monotone* si pour tout $j>i, \; 0 \leq i, \; j \leq k$ nous avons $f(u_j) \geq f(u_i)$. C'est-à-dire que l'estimation du poids total d'un chemin ne décroît pas lors du passage d'un nœud à ses successeurs.
 
-Nous remarquons que consistance et monotonicité sont deux propriétés équivalentes.  En effet, pour deux nœuds adjacents $u_{i-1}$ et $u_i$ sur un chemin $(u_0,\dots,u_k)$, nous avons :
+### Équivalence entre cohérence et monotonie
+
+Nous remarquons que cohérence et monotonicité sont deux propriétés équivalentes.  En effet, pour deux nœuds adjacents $u_{i-1}$ et $u_i$ sur un chemin $(u_0,\dots,u_k)$, nous avons :
 $$
 \begin{aligned}
 & f(u_i) \\
@@ -48,9 +52,24 @@ $$
 & f(u_{i-1})
 \end{aligned}
 $$
-L'autre implication (viz. monotonicité implique consistance) est triviale.
+L'autre implication (viz. monotonicité implique cohérence) vient de :
+$$
+\begin{aligned}
+& \text{h est monotone} \\
+\Rightarrow \quad&\\
+& f(u_i) \geq f(u_{i-1})\\
+= \quad &\{\text{Déf. de } f\}\\
+& g(u_i) + h(u_i) \geq g(u_{i-1}) + h(u_{i-1})\\
+= \quad &\{\text{Déf. de } g\}\\
+& h(u_{i-1}) \leq h(u_i) + w(u_{i-1}, u_i)\\
+= \quad&\\
+& \text{h est cohérente}
+\end{aligned}
+$$
 
-Aussi, une heuristique consistante est admissible (la réciproque n'est pas vraie). En effet, si $h$ est consistante, pour toute arête $(u,v)$ nous avons $h(u) - h(v) \leq w(u,v)$. Soit un chemin quelconque $p = (v_0 = u,\dots,v_k = t)$, nous avons :
+### Cohérence implique admissibilité
+
+Aussi, une heuristique cohérente est admissible (la réciproque n'est pas vraie). En effet, si $h$ est cohérente, pour toute arête $(u,v)$ nous avons $h(u) - h(v) \leq w(u,v)$. Soit un chemin quelconque $p = (v_0 = u,\dots,v_k = t)$, nous avons :
 $$
 \begin{aligned}
 & w(p) \\
@@ -65,6 +84,24 @@ $$
 \end{aligned}
 $$
 En particulier, dans le cas d'un plus court chemin : $h(u) \leq \delta(u,t)$.
+
+Sur l'exemple ci-dessous, une heuristique $h$ est admissible si : 
+$$
+(h(u) \leq 4) \;\wedge\; (h(v) \leq 3) \;\wedge\; (h(t) \leq 0)
+$$
+Elle est cohérente si :
+$$
+(h(t) = 0) \;\wedge\; (h(v) \leq 3) \;\wedge\; (h(u) \leq 1+h(v))
+$$
+L'heuristique proposée ci-dessous est donc admissible mais non cohérente.
+
+```mermaid
+graph TD;
+u["u (h.u = 3)"] --1--> v["v (h.v = 1)"];
+v --3--> t["t (h.t = 0)"];
+```
+
+
 
 ## L'algorithme A*
 
