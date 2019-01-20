@@ -30,15 +30,15 @@ Comment améliorer la recherche d'un plus court chemin entre un nœud source $s$
 
 La fonction $h$ est appelée *fonction heuristique*.
 
-*Déf.* Une heuristique $h$ est *admissible* si pour tout nœud $u$, $h(u)$ est une borne inférieure de la plus courte distance séparant $u$ de la cible $t$, i.e. $h(u) \leq \delta(u,t)$ (avec $\delta(u,t)$ désignant la longueur d'un chemin optimal entre $u$ et $t$ ).
+*Déf.* Une heuristique $h$ est *admissible* si pour tout nœud $u$, $h(u)$ est une borne inférieure pour la plus courte distance séparant $u$ de la cible $t$, i.e. $h(u) \leq \delta(u,t)$ (avec $\delta(u,t)$ désignant la longueur d'un chemin optimal entre $u$ et $t$ ).
 
-*Déf.* Une heuristique $h$ est *cohérente* si pour toute arête $e = (u,v)$ nous avons $h(u) \leq h(v) + w(u,v)$ (avec $w(u,v)$ le poids de l'arête $(u,v)$).
+*Déf.* Une heuristique $h​$ est *cohérente* si pour toute arête $e = (u,v)​$ nous avons $h(u) \leq h(v) + w(u,v)​$ (avec $w(u,v)​$ le poids de l'arête $(u,v)​$).
 
-*Déf.* Soient $(u_0,\dots,u_k)$ un chemin et $g(u_i)$ le coût du chemin $(u_0,\dots,u_i)$. Nous posons $f(u_i) = g(u_i) + h(u_i)$.  Une heuristique $h$ est *monotone* si pour tout $j>i, \; 0 \leq i, \; j \leq k$ nous avons $f(u_j) \geq f(u_i)$. C'est-à-dire que l'estimation du poids total d'un chemin ne décroît pas lors du passage d'un nœud à ses successeurs.
+*Déf.* Soient $(u_0,\dots,u_k)​$ un chemin et $g(u_i)​$ le coût du chemin $(u_0,\dots,u_i)​$. Nous posons $f(u_i) = g(u_i) + h(u_i)​$.  Une heuristique $h​$ est *monotone* si pour tout $j>i, \; 0 \leq i, \; j \leq k​$ nous avons $f(u_j) \geq f(u_i)​$. C'est-à-dire que l'estimation du poids total d'un chemin ne décroît pas lors du passage d'un nœud à ses successeurs.
 
 ### Équivalence entre cohérence et monotonie
 
-Nous remarquons que cohérence et monotonicité sont deux propriétés équivalentes.  En effet, pour deux nœuds adjacents $u_{i-1}$ et $u_i$ sur un chemin $(u_0,\dots,u_k)$, nous avons :
+Nous remarquons que cohérence et monotonicité sont deux propriétés équivalentes.  En effet, pour deux nœuds adjacents $u_{i-1}$ et $u_i$ sur un chemin $(u_0,\dots,u_k)​$, nous avons :
 $$
 \begin{aligned}
 & f(u_i) \\
@@ -46,7 +46,7 @@ $$
 & g(u_i) + h(u_i) \\
 = \quad &\{\text{Déf. du coût d'un chemin}\} \\
 & g(u_{i-1}) + w(u_{i-1}, u_i) + h(u_i) \\
-\geq \quad &\{\text{Déf. de la consistance}\} \\
+\geq \quad &\{\text{Déf. de la cohérence}\} \\
 & g(u_{i-1}) + h(u_{i-1}) \\
 = \quad &\{\text{Déf. de } f\} \\
 & f(u_{i-1})
@@ -56,7 +56,7 @@ L'autre implication (viz. monotonicité implique cohérence) vient de :
 $$
 \begin{aligned}
 & \text{h est monotone} \\
-\Rightarrow \quad&\\
+\Rightarrow \quad& \{\text{Pour toute arête $(u_{i-1},u_i)$, par déf. de la monotonie}\}\\
 & f(u_i) \geq f(u_{i-1})\\
 = \quad &\{\text{Déf. de } f\}\\
 & g(u_i) + h(u_i) \geq g(u_{i-1}) + h(u_{i-1})\\
@@ -69,7 +69,7 @@ $$
 
 ### Cohérence implique admissibilité
 
-Aussi, une heuristique cohérente est admissible (la réciproque n'est pas vraie). En effet, si $h$ est cohérente, pour toute arête $(u,v)$ nous avons $h(u) - h(v) \leq w(u,v)$. Soit un chemin quelconque $p = (v_0 = u,\dots,v_k = t)$, nous avons :
+Aussi, une heuristique cohérente est admissible (la réciproque n'est pas vraie). En effet, si $h​$ est cohérente, pour toute arête $(u,v)​$ nous avons $h(u) - h(v) \leq w(u,v)​$. Soit un chemin quelconque $p = (v_0 = u,\dots,v_k = t)​$, nous avons :
 $$
 \begin{aligned}
 & w(p) \\
@@ -79,7 +79,7 @@ $$
 & \sum_{i=0}^{k-1} h(v_i) - h(v_{i+1}) \\
 = \quad &\{\text{Arithmétique}\} \\
 & h(u) - h(t) \\
-= \quad &\{t \text{ est la cible}\} \\
+= \quad &\{t \text{ est la cible, donc $h(t)=0$}\} \\
 & h(u)
 \end{aligned}
 $$
@@ -567,3 +567,29 @@ $$
 
 Le code source d'une implémentation de l'algorithme $IDA*$ appliqué au problème du taquin est disponible à l'adresse suivante : https://github.com/peportier/ia06-idastar
 
+# Génération du voisinage en $O(1)$
+
+Jusqu'à présent, nous stockons les voisins sous forme de configurations complètes. Générer un voisin pour une grille avec des côtés de taille $s$ nécessite $s^2$ opérations et demande d'allouer une nouvelle zone mémoire. En stockant le coup qui permet de transformer la configuration actuelle en une voisine, la génération de chaque voisin devient de complexité $O(1)$ et il n'est plus nécessaire de réserver une nouvelle zone mémoire. Un code source utilisant cette stratégie est disponible à l'adresse suivante : https://github.com/peportier/ia07-idastar-delta-nei
+
+# $\epsilon$-optimalité
+
+Un algorithme de recherche est $\epsilon$-optimal s'il termine en retournant une solution de coût au plus $(1+\epsilon)\delta(s,t)$ avec $s$ la configuration initiale, $t$ la configuration finale et $\epsilon$ une petite constante positive.
+
+Nous montrons que l'algorithme $A*$ avec une fonction de coût $f'(u) = g(u) + (1+\epsilon)h(u)$ est $\epsilon$-optimal pour une heuristique $h$ admissible. En effet, pour $u$ un nœud gris minimal, nous avons :
+$$
+\begin{aligned}
+& f'(u) \\
+= \quad &\left\{\text{Déf. de} f'\right\} \\
+& g(u) + (1+\epsilon)h(u) \\
+= \quad &\left\{u \text{ est un nœud gris minimal, invariant de Dijkstra} \right\} \\
+& \delta(s,u) + (1+\epsilon)h(u) \\
+\leq \quad &\left\{h \text{ est admissible} \right\} \\
+& \delta(s,u) + \delta(u,t) + \epsilon\delta(u,t) \\
+= \quad &\left\{\text{on considère un plus court chemin de } s \text{ à } t \text{ passant par } u \right\} \\
+& \delta(s,t) + \epsilon\delta(u,t) \\
+\leq \quad &\left\{\text{on considère un plus court chemin de } s \text{ à } t \text{ passant par } u \right\} \\
+& \delta(s,t) + \epsilon\delta(s,t) \\
+= \quad &(1+\epsilon)\delta(s,t)
+\end{aligned}
+$$
+Lorsque la cible est rencontrée, $f'(t) \leq (1+\epsilon)\delta(s,t)$.
