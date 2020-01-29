@@ -32,13 +32,13 @@ La fonction $h$ est appelée *fonction heuristique*.
 
 *Déf.* Une heuristique $h$ est *admissible* si pour tout nœud $u$, $h(u)$ est une borne inférieure pour la plus courte distance séparant $u$ de la cible $t$, i.e. $h(u) \leq \delta(u,t)$ (avec $\delta(u,t)$ désignant la longueur d'un chemin optimal entre $u$ et $t$ ).
 
-*Déf.* Une heuristique $h​$ est *cohérente* si pour toute arête $e = (u,v)​$ nous avons $h(u) \leq h(v) + w(u,v)​$ (avec $w(u,v)​$ le poids de l'arête $(u,v)​$).
+*Déf.* Une heuristique $h$ est *cohérente* si pour toute arête $e = (u,v)$ nous avons $h(u) \leq h(v) + w(u,v)$ (avec $w(u,v)$ le poids de l'arête $(u,v)$).
 
-*Déf.* Soient $(u_0,\dots,u_k)​$ un chemin et $g(u_i)​$ le coût du chemin $(u_0,\dots,u_i)​$. Nous posons $f(u_i) = g(u_i) + h(u_i)​$.  Une heuristique $h​$ est *monotone* si pour tout $j>i, \; 0 \leq i, \; j \leq k​$ nous avons $f(u_j) \geq f(u_i)​$. C'est-à-dire que l'estimation du poids total d'un chemin ne décroît pas lors du passage d'un nœud à ses successeurs.
+*Déf.* Soient $(u_0,\dots,u_k)$ un chemin et $g(u_i)$ le coût du chemin $(u_0,\dots,u_i)$. Nous posons $f(u_i) = g(u_i) + h(u_i)$.  Une heuristique $h$ est *monotone* si pour tout $j>i, \; 0 \leq i, \; j \leq k$ nous avons $f(u_j) \geq f(u_i)$. C'est-à-dire que l'estimation du poids total d'un chemin ne décroît pas lors du passage d'un nœud à ses successeurs.
 
 ### Équivalence entre cohérence et monotonie
 
-Nous remarquons que cohérence et monotonicité sont deux propriétés équivalentes.  En effet, pour deux nœuds adjacents $u_{i-1}$ et $u_i$ sur un chemin $(u_0,\dots,u_k)​$, nous avons :
+Nous remarquons que cohérence et monotonicité sont deux propriétés équivalentes.  En effet, pour deux nœuds adjacents $u_{i-1}$ et $u_i$ sur un chemin $(u_0,\dots,u_k)$, nous avons :
 $$
 \begin{aligned}
 & f(u_i) \\
@@ -69,13 +69,13 @@ $$
 
 ### Cohérence implique admissibilité
 
-Aussi, une heuristique cohérente est admissible (la réciproque n'est pas vraie). En effet, si $h​$ est cohérente, pour toute arête $(u,v)​$ nous avons $h(u) - h(v) \leq w(u,v)​$. Soit un chemin quelconque $p = (v_0 = u,\dots,v_k = t)​$, nous avons :
+Aussi, une heuristique cohérente est admissible (la réciproque n'est pas vraie). En effet, si $h$ est cohérente, pour toute arête $(u,v)$ nous avons $h(u) - h(v) \leq w(u,v)$. Soit un chemin quelconque $p = (v_0 = u,\dots,v_k = t)$, nous avons :
 $$
 \begin{aligned}
 & w(p) \\
 = \quad &\{\text{Déf. du poids d'un chemin}\} \\
 & \sum_{i=0}^{k-1} w(v_i, v_{i+1}) \\
-\geq \quad &\{\text{Consistance de } h\} \\
+\geq \quad &\{\text{Cohérence de } h\} \\
 & \sum_{i=0}^{k-1} h(v_i) - h(v_{i+1}) \\
 = \quad &\{\text{Arithmétique}\} \\
 & h(u) - h(t) \\
@@ -566,6 +566,10 @@ $$
 $$
 
 Le code source d'une implémentation de l'algorithme $IDA*$ appliqué au problème du taquin est disponible à l'adresse suivante : https://github.com/peportier/ia06-idastar
+
+Ci-dessous une illustration de la première itération de IDA* où $ub=13$ et $nub=15$ avec l'heuristique de Manhattan. Remarquer que l'illustration représente un plus grand nombre d'itérations pour l'heuristique moins informée "nombre de pièces mal placées".
+
+![illustration-ida-start](./media/illustration-ida-star.jpg)
 
 # Génération du voisinage en $O(1)$
 
