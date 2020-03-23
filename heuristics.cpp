@@ -216,50 +216,31 @@ print( const State& state )
 int
 main()
 {
-  State b = {4,8,3,2,0,7,6,5,1};
+  //State b = {4,8,3,2,0,7,6,5,1};
+  State b = {14,10,9,4,13,6,5,8,2,12,7,0,1,3,11,15};
   list<State> best_path;
   int nbiter = 0;
   
+  /*
   astar(b, breadth, best_path, nbiter);
   cout << "Heuristic breadth:" << endl;
   cout << "nb moves: " << best_path.size()-1 << endl;
   cout << "nb nodes explored: " << nbiter << endl;
   
-  /*
-  for( list<State>::iterator it = best_path.begin() ;
-       it != best_path.end() ; it++ )
-  {
-    print( (*it) );
-  }
-  */
-
   best_path.clear();
   astar(b, nbmis, best_path, nbiter);
   cout << "Heuristic nbmis:" << endl;
   cout << "nb moves: " << best_path.size()-1 << endl;
   cout << "nb nodes explored: " << nbiter << endl;
-  
-  /*
-  for( list<State>::iterator it = best_path.begin() ;
-       it != best_path.end() ; it++ )
-  {
-    print( (*it) );
-  }
   */
-
+  
   best_path.clear();
   astar(b, manh, best_path, nbiter);
   cout << "Heuristic manh:" << endl;
   cout << "nb moves: " << best_path.size()-1 << endl;
   cout << "nb nodes explored: " << nbiter << endl;
 
-  /*
-  for( list<State>::iterator it = best_path.begin() ;
-       it != best_path.end() ; it++ )
-  {
-    print( (*it) );
-  }
-  */
+  //for( const State& s : best_path ) print(s);
 
   return 0;
 }
